@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace PositionSaveLoad
 {
-    [BepInPlugin("tairasoul.position.saveload", "PositionSaveLoad", "1.0.0")]
+    [BepInPlugin("tairasoul.position.saveload", "PositionSaveLoad", "1.0.1")]
     public class Plugin: BaseUnityPlugin
     {
         internal ConfigEntry<KeyCode> SaveKey;
@@ -19,12 +19,11 @@ namespace PositionSaveLoad
         {
             SaveKey = Config.Bind("Keybinds", "SavePos", KeyCode.N, "Keybind to save your position.");
             RestoreKey = Config.Bind("Keybinds", "RestorePos", KeyCode.M, "Keybind to load your position.");
-            SceneManager.activeSceneChanged += SceneLoad;
         }
 
-        internal void SceneLoad(Scene old, Scene newS)
+        internal void Update()
         {
-            if (newS.name != "Intro" && newS.name != "Menu")
+            if ((!posText || posText.gameObject == null) && GameObject.Find("UI/ui/Area") != null)
             {
                 GameObject Area = GameObject.Find("UI/ui/Area");
                 GameObject Pos = GameObject.Instantiate(Area);
@@ -35,10 +34,6 @@ namespace PositionSaveLoad
                 posText = Pos.GetComponent<Text>();
                 posText.alignment = TextAnchor.UpperLeft;
             }
-        }
-
-        internal void Update()
-        {
             if (UnityInput.Current.GetKeyDown(SaveKey.Value))
             {
                 if (!SavePosDown)
